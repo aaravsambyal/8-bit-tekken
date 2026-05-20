@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEO SHATTER: 8-Bit Tournament</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Arcade Cabinet Container -->
+  <div class="arcade-cabinet">
+    <div class="arcade-header">
+      <div class="cabinet-marquee">
+        <h1 class="marquee-title">NEO SHATTER</h1>
+        <div class="marquee-subtitle">8-BIT TOURNAMENT</div>
+      </div>
+      <div class="cabinet-lights">
+        <div class="light red flash-fast"></div>
+        <div class="light blue flash-slow"></div>
+        <div class="light yellow flash-medium"></div>
+      </div>
+    </div>
+
+    <!-- Main Game Viewport (CRT Screen wrapper) -->
+    <div class="screen-bezel">
+      <div class="screen-reflection"></div>
+      <div class="crt-scanlines"></div>
+      
+      <div id="game-screen" class="screen-content">
+        <!-- Start / Main Menu Screen -->
+        <div id="menu-screen" class="game-overlay active">
+          <div class="menu-header">
+            <h2 class="game-logo text-flicker">NEO SHATTER</h2>
+            <p class="game-tagline">8-BIT LEGENDS</p>
+          </div>
+          
+          <div class="menu-options">
+            <button id="btn-insert-coin" class="btn-arcade glow-pulse">
+              <span class="coin-icon">🪙</span> INSERT COIN & START
+            </button>
+          </div>
+
+          <div class="menu-footer">
+            <p class="blink-fast">PRESS ANY KEY TO START</p>
+            <p class="copyright">© 2026 DEEPMIND ANTIGRAVITY STUDIO</p>
+          </div>
+        </div>
+
+        <!-- Character Selection Screen -->
+        <div id="char-select-screen" class="game-overlay">
+          <h3 class="screen-title">SELECT YOUR FIGHTER</h3>
+          
+          <div class="char-selection-container">
+            <!-- Left: Player 1 Selection Card -->
+            <div id="p1-preview" class="fighter-preview-card player-1-card">
+              <div class="card-tag">P1 PLAYER</div>
+              <div class="fighter-avatar-large" id="p1-avatar"></div>
+              <div class="fighter-details">
+                <h4 id="p1-name" class="char-name-display">GOKU</h4>
+                <div class="stat-bar-container">
+                  <span>POW</span>
+                  <div class="stat-bar"><div class="fill" style="width: 70%"></div></div>
+                </div>
+                <div class="stat-bar-container">
+                  <span>SPD</span>
+                  <div class="stat-bar"><div class="fill" style="width: 80%"></div></div>
+                </div>
+                <div class="stat-bar-container">
+                  <span>RNG</span>
+                  <div class="stat-bar"><div class="fill" style="width: 60%"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Middle: Character Grid -->
+            <div class="character-grid">
+              <div class="char-grid-cell active" data-char="goku">
+                <div class="avatar-cell goku-cell"></div>
+                <span class="grid-name">GOKU</span>
+              </div>
+              <div class="char-grid-cell" data-char="naruto">
+                <div class="avatar-cell naruto-cell"></div>
+                <span class="grid-name">NARUTO</span>
+              </div>
+              <div class="char-grid-cell" data-char="luffy">
+                <div class="avatar-cell luffy-cell"></div>
+                <span class="grid-name">LUFFY</span>
+              </div>
+              <div class="char-grid-cell" data-char="ichigo">
+                <div class="avatar-cell ichigo-cell"></div>
+                <span class="grid-name">ICHIGO</span>
+              </div>
+            </div>
+
+            <!-- Right: CPU Selection Card -->
+            <div id="p2-preview" class="fighter-preview-card player-2-card">
+              <div class="card-tag">CPU OPPONENT</div>
+              <div class="fighter-avatar-large" id="p2-avatar"></div>
+              <div class="fighter-details">
+                <h4 id="p2-name" class="char-name-display">NARUTO</h4>
+                <div class="stat-bar-container">
+                  <span>POW</span>
+                  <div class="stat-bar"><div class="fill" style="width: 80%"></div></div>
+                </div>
+                <div class="stat-bar-container">
+                  <span>SPD</span>
+                  <div class="stat-bar"><div class="fill" style="width: 90%"></div></div>
+                </div>
+                <div class="stat-bar-container">
+                  <span>RNG</span>
+                  <div class="stat-bar"><div class="fill" style="width: 70%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="selection-footer">
+            <button id="btn-fight" class="btn-arcade disabled blink-medium">FIGHT!</button>
+            <div class="selection-instruction">USE [A]/[D] OR [←]/[→] TO MOVE • PRESS [J] OR [ENTER] TO SELECT</div>
+          </div>
+        </div>
+
+        <!-- Fight Loading Screen -->
+        <div id="loading-screen" class="game-overlay">
+          <div class="loading-layout">
+            <div class="vs-fighter vs-left">
+              <div class="vs-avatar" id="load-p1-avatar"></div>
+              <h2 id="load-p1-name">GOKU</h2>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="vs-fighter vs-right">
+              <div class="vs-avatar" id="load-p2-avatar"></div>
+              <h2 id="load-p2-name">NARUTO</h2>
+            </div>
+          </div>
+          <div class="loading-bar-wrapper">
+            <div class="loading-text">LOADING ARENA...</div>
+            <div class="loading-bar"><div class="fill" id="load-progress"></div></div>
+          </div>
+        </div>
+
+        <!-- Gameplay Canvas and HUD -->
+        <div id="gameplay-container" class="game-overlay">
+          <!-- Game HUD -->
+          <div class="game-hud">
+            <!-- P1 Health & Info -->
+            <div class="hud-player p1-hud">
+              <div class="hud-name-wrapper">
+                <span class="hud-player-name" id="hud-p1-name">GOKU</span>
+                <div class="round-indicators" id="p1-rounds">
+                  <div class="round-dot"></div>
+                  <div class="round-dot"></div>
+                </div>
+              </div>
+              <div class="health-bar-bg">
+                <div class="health-bar-fill" id="p1-health"></div>
+                <div class="health-bar-damage" id="p1-health-damage"></div>
+              </div>
+            </div>
+
+            <!-- Timer and Round Display -->
+            <div class="hud-center">
+              <div class="hud-round-label" id="round-display">ROUND 1</div>
+              <div class="hud-timer" id="timer-display">60</div>
+            </div>
+
+            <!-- P2 Health & Info -->
+            <div class="hud-player p2-hud">
+              <div class="hud-name-wrapper">
+                <div class="round-indicators" id="p2-rounds">
+                  <div class="round-dot"></div>
+                  <div class="round-dot"></div>
+                </div>
+                <span class="hud-player-name" id="hud-p2-name">NARUTO</span>
+              </div>
+              <div class="health-bar-bg">
+                <div class="health-bar-fill" id="p2-health"></div>
+                <div class="health-bar-damage" id="p2-health-damage"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combo text overlays -->
+          <div id="p1-combo" class="combo-indicator left-combo"></div>
+          <div id="p2-combo" class="combo-indicator right-combo"></div>
+
+          <!-- Fight Announcements (e.g. "FIGHT!", "ROUND 1", "K.O.") -->
+          <div id="announcement-text" class="announcement"></div>
+
+          <!-- Game Canvas -->
+          <canvas id="game-canvas"></canvas>
+        </div>
+
+        <!-- Game Over & Podium Screen -->
+        <div id="gameover-screen" class="game-overlay">
+          <div class="gameover-content">
+            <h2 id="gameover-title" class="victory-flash">K.O.</h2>
+            <h3 id="winner-declaration">GOKU WINS!</h3>
+            
+            <div class="podium-display">
+              <div class="winner-portrait" id="podium-portrait"></div>
+            </div>
+            
+            <div class="gameover-buttons">
+              <button id="btn-rematch" class="btn-arcade">REMATCH</button>
+              <button id="btn-main-menu" class="btn-arcade">MAIN MENU</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pause overlay -->
+        <div id="pause-screen" class="game-overlay">
+          <div class="pause-box">
+            <h2>PAUSED</h2>
+            <button id="btn-resume" class="btn-arcade">RESUME</button>
+            <button id="btn-quit" class="btn-arcade">QUIT FIGHT</button>
+          </div>
+        </div>
+
+        <!-- Audio mute toggle button -->
+        <button id="btn-audio-toggle" class="audio-toggle-btn" title="Toggle Sound">🔊</button>
+      </div>
+    </div>
+
+    <!-- Arcade Controller Panel (Decorative & Touch Controls) -->
+    <div class="arcade-controls">
+      <div class="controller-joystick">
+        <div class="joystick-base">
+          <div class="joystick-shaft" id="visual-joystick">
+            <div class="joystick-knob"></div>
+          </div>
+        </div>
+        <div class="control-label">MOVEMENT</div>
+      </div>
+      
+      <div class="keyboard-guide">
+        <div class="guide-row">
+          <span class="key-cap">W</span>
+          <span class="guide-desc">Jump</span>
+        </div>
+        <div class="guide-row">
+          <span class="key-cap">A</span>
+          <span class="key-cap">S</span>
+          <span class="key-cap">D</span>
+          <span class="guide-desc">Move & Crouch</span>
+        </div>
+        <div class="guide-info">Hold BACK (opposite direction) to Block</div>
+      </div>
+
+      <div class="arcade-buttons">
+        <div class="btn-group">
+          <div class="button-wrapper">
+            <button class="arcade-action-btn red-btn" id="ctrl-punch" data-key="j">J</button>
+            <span class="btn-label">PUNCH</span>
+          </div>
+          <div class="button-wrapper">
+            <button class="arcade-action-btn blue-btn" id="ctrl-kick" data-key="k">K</button>
+            <span class="btn-label">KICK</span>
+          </div>
+          <div class="button-wrapper">
+            <button class="arcade-action-btn yellow-btn" id="ctrl-special" data-key="i">I</button>
+            <span class="btn-label">SPECIAL</span>
+          </div>
+        </div>
+        <div class="btn-label-footer">ACTION BUTTONS</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
