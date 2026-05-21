@@ -1062,6 +1062,17 @@ class GameEngine {
     document.getElementById('btn-fight').addEventListener('click', () => {
       if (this.player1 && this.player2) {
         audio.playSFX('start');
+        
+        // Attempt Fullscreen on mobile devices for better experience
+        if (window.innerWidth <= 1024) {
+          const docEl = document.documentElement;
+          if (docEl.requestFullscreen) {
+            docEl.requestFullscreen().catch(() => {});
+          } else if (docEl.webkitRequestFullscreen) {
+            docEl.webkitRequestFullscreen().catch(() => {});
+          }
+        }
+        
         this.switchState('loading');
       }
     });
@@ -1364,6 +1375,7 @@ class GameEngine {
 
   switchState(newState) {
     this.gameState = newState;
+    document.body.className = 'state-' + newState;
     
     // Manage display overlays
     document.querySelectorAll('.game-overlay').forEach(screen => {
