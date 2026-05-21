@@ -1169,7 +1169,7 @@ body {
   display: none;
 }
 
-@media (max-width: 900px) and (hover: none) {
+@media (pointer: coarse) {
   #mobile-controls {
     display: flex;
     justify-content: space-between;
@@ -1257,7 +1257,7 @@ body {
 }
 
 /* Portrait specific overlay */
-@media screen and (max-width: 900px) and (orientation: portrait) and (hover: none) {
+@media screen and (orientation: portrait) and (pointer: coarse) {
   .arcade-cabinet, #mobile-controls {
     display: none !important;
   }
@@ -1301,7 +1301,7 @@ body {
 }
 
 /* Hard enforce no overflow on landscape mobile */
-@media screen and (max-width: 900px) and (orientation: landscape) and (hover: none) {
+@media screen and (orientation: landscape) and (pointer: coarse) {
   body, html {
     overflow: hidden;
     position: fixed;
