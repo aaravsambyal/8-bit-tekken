@@ -1039,7 +1039,18 @@ class GameEngine {
       audio.init();
       audio.playSFX('start');
       audio.startMusic();
+      
+      // Request fullscreen immediately upon starting the game
+      if (window.innerWidth <= 1024) {
+        this.toggleFullscreen(true);
+      }
+      
       this.switchState('select');
+    });
+
+    // Fullscreen toggle
+    document.getElementById('btn-fullscreen-toggle').addEventListener('click', () => {
+      this.toggleFullscreen();
     });
 
     // Audio toggle
@@ -1062,17 +1073,6 @@ class GameEngine {
     document.getElementById('btn-fight').addEventListener('click', () => {
       if (this.player1 && this.player2) {
         audio.playSFX('start');
-        
-        // Attempt Fullscreen on mobile devices for better experience
-        if (window.innerWidth <= 1024) {
-          const docEl = document.documentElement;
-          if (docEl.requestFullscreen) {
-            docEl.requestFullscreen().catch(() => {});
-          } else if (docEl.webkitRequestFullscreen) {
-            docEl.webkitRequestFullscreen().catch(() => {});
-          }
-        }
-        
         this.switchState('loading');
       }
     });
@@ -1371,6 +1371,25 @@ class GameEngine {
     }
     
     el.appendChild(canvas);
+  }
+
+  toggleFullscreen(forceEnter = false) {
+    const docEl = document.documentElement;
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+    
+    if (!isFullscreen) {
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen().catch(() => {});
+      }
+    } else if (!forceEnter) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
   }
 
   switchState(newState) {

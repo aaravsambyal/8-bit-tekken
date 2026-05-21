@@ -852,11 +852,10 @@ body {
   justify-content: center;
 }
 
-/* Audio Toggle Button */
-.audio-toggle-btn {
+/* Utility Buttons */
+.audio-toggle-btn, .fullscreen-toggle-btn {
   position: absolute;
   top: 15px;
-  right: 15px;
   background: rgba(0, 0, 0, 0.5);
   border: 2px solid rgba(255, 255, 255, 0.2);
   color: #fff;
@@ -866,19 +865,21 @@ body {
   border-radius: 50%;
   cursor: pointer;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 100;
-  outline: none;
+  justify-content: center;
+  z-index: 50;
   transition: all 0.1s;
 }
 
-.audio-toggle-btn:hover {
+.audio-toggle-btn { right: 15px; }
+.fullscreen-toggle-btn { right: 60px; font-size: 20px; }
+
+.audio-toggle-btn:hover, .fullscreen-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-.audio-toggle-btn:active {
+.audio-toggle-btn:active, .fullscreen-toggle-btn:active {
   transform: scale(0.9);
 }
 
