@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NEO SHATTER: 8-Bit Tournament</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,6 +10,12 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Rotate Device Prompt (Mobile Portrait) -->
+  <div id="rotate-prompt">
+    <h2 class="blink-medium">ROTATE DEVICE</h2>
+    <p>Please rotate your phone sideways to play in Landscape mode.</p>
+  </div>
+
   <!-- Arcade Cabinet Container -->
   <div class="arcade-cabinet">
     <div class="arcade-header">
@@ -118,7 +124,7 @@
           </div>
 
           <div class="selection-footer">
-            <button id="btn-fight" class="btn-arcade disabled blink-medium">FIGHT!</button>
+            <button id="btn-fight" class="btn-arcade disabled glow-pulse">FIGHT!</button>
             <div class="selection-instruction">USE [A]/[D] OR [←]/[→] TO MOVE • PRESS [J] OR [ENTER] TO SELECT</div>
           </div>
         </div>
@@ -266,6 +272,29 @@
           </div>
         </div>
         <div class="btn-label-footer">ACTION BUTTONS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Touch Controls overlay -->
+  <div id="mobile-controls">
+    <div class="dpad">
+      <div class="dpad-row">
+        <button class="touch-btn" data-key="KeyW">▲</button>
+      </div>
+      <div class="dpad-row">
+        <button class="touch-btn" data-key="KeyA">◀</button>
+        <button class="touch-btn" data-key="KeyS">▼</button>
+        <button class="touch-btn" data-key="KeyD">▶</button>
+      </div>
+    </div>
+    <div class="action-pad">
+      <div class="action-pad-row">
+        <button class="touch-btn action-red" data-key="KeyJ">P</button>
+        <button class="touch-btn action-blue" data-key="KeyK">K</button>
+      </div>
+      <div class="action-pad-row">
+        <button class="touch-btn action-yellow" data-key="KeyI">SP</button>
       </div>
     </div>
   </div>

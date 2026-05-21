@@ -12,22 +12,29 @@ class SoundSynth {
     this.ctx = null;
     this.muted = false;
     this.musicInterval = null;
-    this.musicTempo = 135; // BPM
+    this.musicTempo = 165; // Intense fighting game BPM
     this.musicBeatStep = 0;
     
-    // Simple 16-step retro melody loops (frequency values)
-    // Key: A minor / C major
+    // 64-step high-energy E minor fighting theme
     this.musicLead = [
-      440, 480, 523, 587, 659, 0, 659, 587,
-      523, 0, 440, 392, 440, 523, 587, 659,
-      523, 587, 659, 784, 880, 0, 880, 784,
-      698, 0, 587, 523, 587, 659, 784, 523
+      329, 329, 0,   329, 392, 0,   440, 0,
+      329, 329, 0,   293, 329, 0,   0,   0,
+      329, 329, 0,   329, 493, 0,   440, 0,
+      392, 0,   329, 0,   293, 0,   0,   0,
+      659, 659, 0,   659, 783, 0,   880, 0,
+      659, 659, 0,   587, 659, 0,   0,   0,
+      987, 0,   880, 0,   783, 0,   659, 0,
+      587, 0,   0,   0,   392, 440, 493, 587
     ];
     this.musicBass = [
-      110, 110, 130, 130, 146, 146, 110, 110,
-      110, 110, 98,  98,  110, 130, 146, 165,
-      130, 130, 165, 165, 220, 220, 196, 196,
-      174, 174, 146, 146, 165, 165, 130, 110
+      82, 82, 82, 82, 82, 82, 82, 82,
+      73, 73, 73, 73, 73, 73, 73, 73,
+      82, 82, 82, 82, 82, 82, 82, 82,
+      98, 98, 98, 98, 110, 110, 110, 110,
+      82, 82, 82, 82, 82, 82, 82, 82,
+      73, 73, 73, 73, 73, 73, 73, 73,
+      82, 82, 82, 82, 82, 82, 82, 82,
+      123, 123, 123, 123, 110, 110, 110, 110
     ];
   }
 
@@ -92,85 +99,111 @@ class SoundSynth {
           break;
         }
         case 'punch': {
-          // Short downward pitch pulse + bit of white noise
+          // Energetic Punch: Heavy sub-bass thump + sharp mid-range smack + noise burst
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gain1 = this.ctx.createGain();
+          const gain2 = this.ctx.createGain();
+          
+          osc1.type = 'sine'; // Sub drop
+          osc1.frequency.setValueAtTime(150, now);
+          osc1.frequency.exponentialRampToValueAtTime(20, now + 0.15);
+          gain1.gain.setValueAtTime(0.8, now);
+          gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          
+          osc2.type = 'square'; // Smack
+          osc2.frequency.setValueAtTime(300, now);
+          osc2.frequency.exponentialRampToValueAtTime(100, now + 0.05);
+          gain2.gain.setValueAtTime(0.3, now);
+          gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+
+          osc1.connect(gain1); gain1.connect(this.ctx.destination);
+          osc2.connect(gain2); gain2.connect(this.ctx.destination);
+          
+          osc1.start(now); osc1.stop(now + 0.15);
+          osc2.start(now); osc2.stop(now + 0.05);
+          
+          this.playNoise(0.1, 0.5, 1200); // Sharp swoosh/smack noise
+          break;
+        }
+        case 'kick': {
+          // Energetic Kick: Deep heavy sweep with a sharp snap
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gain1 = this.ctx.createGain();
+          const gain2 = this.ctx.createGain();
+          
+          osc1.type = 'sine'; // Sub boom
+          osc1.frequency.setValueAtTime(200, now);
+          osc1.frequency.exponentialRampToValueAtTime(20, now + 0.2);
+          gain1.gain.setValueAtTime(1.0, now);
+          gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          
+          osc2.type = 'triangle'; // Snap
+          osc2.frequency.setValueAtTime(400, now);
+          osc2.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+          gain2.gain.setValueAtTime(0.5, now);
+          gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+          osc1.connect(gain1); gain1.connect(this.ctx.destination);
+          osc2.connect(gain2); gain2.connect(this.ctx.destination);
+          
+          osc1.start(now); osc1.stop(now + 0.2);
+          osc2.start(now); osc2.stop(now + 0.1);
+          
+          this.playNoise(0.15, 0.6, 800); // Heavier wind noise
+          break;
+        }
+        case 'block': {
+          // Solid Metallic Clang
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(280, now);
-          osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
-          gain.gain.setValueAtTime(0.3, now);
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+          gain.gain.setValueAtTime(0.4, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
           osc.stop(now + 0.1);
-          
-          this.playNoise(0.05, 0.2, 500); // add punch thud noise
-          break;
-        }
-        case 'kick': {
-          // Deeper downward sweep
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(180, now);
-          osc.frequency.exponentialRampToValueAtTime(30, now + 0.15);
-          gain.gain.setValueAtTime(0.35, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.15);
-          
-          this.playNoise(0.08, 0.3, 300); // add kick wind noise
-          break;
-        }
-        case 'block': {
-          // High metal clash
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(900, now);
-          osc.frequency.setValueAtTime(600, now + 0.03);
-          gain.gain.setValueAtTime(0.12, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.06);
+          this.playNoise(0.05, 0.4, 3000); // Sharp clink
           break;
         }
         case 'hit': {
-          // Loud crunch noise + bass pulse
+          // Visceral crunch and explosion
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(100, now);
-          osc.frequency.linearRampToValueAtTime(10, now + 0.12);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+          osc.frequency.setValueAtTime(120, now);
+          osc.frequency.linearRampToValueAtTime(10, now + 0.2);
+          gain.gain.setValueAtTime(0.8, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.12);
+          osc.stop(now + 0.2);
           
-          this.playNoise(0.12, 0.4, 800);
+          this.playNoise(0.2, 1.2, 500); // VERY loud explosion noise
           break;
         }
         case 'special': {
-          // Futuristic sweep
+          // Anime beam charge up -> boom
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(150, now);
-          osc.frequency.exponentialRampToValueAtTime(800, now + 0.25);
-          osc.frequency.exponentialRampToValueAtTime(300, now + 0.4);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+          osc.frequency.setValueAtTime(50, now);
+          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.4);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.8);
+          gain.gain.setValueAtTime(0.01, now);
+          gain.gain.linearRampToValueAtTime(0.6, now + 0.4);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.4);
+          osc.stop(now + 0.8);
+          
+          setTimeout(() => this.playNoise(0.4, 1.0, 1000), 400); // Boom at peak
           break;
         }
         case 'jump': {
@@ -286,9 +319,9 @@ class SoundSynth {
       if (leadFreq > 0) {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = 'square';
+        osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(leadFreq, now);
-        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.setValueAtTime(0.06, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + beatDuration * 0.9);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -296,31 +329,41 @@ class SoundSynth {
         osc.stop(now + beatDuration * 0.9);
       }
 
-      // Play Bass channel (every other beat)
-      if (this.musicBeatStep % 2 === 0) {
-        const bassFreq = this.musicBass[Math.floor(step / 2) % this.musicBass.length];
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(bassFreq, now);
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + beatDuration * 1.8);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + beatDuration * 1.8);
-      }
+      // Play Bass channel (pumping 16th notes)
+      const bassFreq = this.musicBass[step];
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(bassFreq, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + beatDuration * 0.8);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + beatDuration * 0.8);
 
-      // Play Drum channel (Noise snaps)
+      // Play Drum channel (Heavy kick & snare)
       if (this.musicBeatStep % 4 === 0) {
-        // Kick thud
-        this.playNoise(0.08, 0.05, 120);
-      } else if (this.musicBeatStep % 4 === 2) {
+        // Thump Kick
+        const kOsc = this.ctx.createOscillator();
+        const kGain = this.ctx.createGain();
+        kOsc.type = 'sine';
+        kOsc.frequency.setValueAtTime(150, now);
+        kOsc.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+        kGain.gain.setValueAtTime(0.5, now);
+        kGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        kOsc.connect(kGain); kGain.connect(this.ctx.destination);
+        kOsc.start(now); kOsc.stop(now + 0.1);
+      } 
+      
+      if (this.musicBeatStep % 4 === 2) {
         // Snare burst
-        this.playNoise(0.06, 0.03, 1000);
-      } else if (this.musicBeatStep % 2 === 1) {
-        // Hi-hat tick
-        this.playNoise(0.02, 0.015, 6000);
+        this.playNoise(0.08, 0.12, 2000);
+      }
+      
+      if (this.musicBeatStep % 2 === 1 || this.musicBeatStep % 4 === 0) {
+        // Driving hi-hat
+        this.playNoise(0.02, 0.04, 8000);
       }
 
       this.musicBeatStep++;
@@ -344,11 +387,20 @@ const audio = new SoundSynth();
 class ImageLoader {
   constructor() {
     this.sprites = {};
+    this.bgImage = null;
     this.loaded = 0;
-    this.total = 4;
+    this.total = 5; // 4 characters + 1 background
   }
   
   loadAll(callback) {
+    // Load background
+    this.bgImage = new Image();
+    this.bgImage.src = 'assets/jungle_bg.png';
+    this.bgImage.onload = () => {
+      this.loaded++;
+      if (this.loaded === this.total && callback) callback();
+    };
+
     const chars = ['goku', 'naruto', 'luffy', 'ichigo'];
     chars.forEach(char => {
       const img = new Image();
@@ -728,19 +780,23 @@ class Fighter {
 
     // Flip sprite depending on direction
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-    ctx.scale(this.direction, 1);
+    
+    // Luffy and Ichigo's base assets face left, so invert their direction
+    let drawDir = this.direction;
+    if (this.charId === 'luffy' || this.charId === 'ichigo') {
+      drawDir = -this.direction;
+    }
+    ctx.scale(drawDir, 1);
 
     const img = imageAssets.sprites[this.charId];
     
     // Ensure image is loaded and valid
     if (img && img.width > 0) {
-      // Scale down image to fit character box (max 120px tall)
-      const scaleFactor = Math.min(this.width / (img.width || 1), 120 / (img.height || 1)) * 1.5;
-      ctx.scale(scaleFactor, scaleFactor);
-      
       // Character drawing routines
       if (this.state === 'defeat') {
         ctx.rotate(-Math.PI / 2);
+        const scaleFactor = Math.min(this.width / (img.width || 1), 120 / (img.height || 1)) * 1.5;
+        ctx.scale(scaleFactor, scaleFactor);
         ctx.drawImage(img, -img.width/2, -img.height/2);
       } else {
         // Bobbing
@@ -748,7 +804,6 @@ class Fighter {
         if (this.state === 'idle') bob = (this.animFrame % 2 === 0) ? 3 : 0;
         
         const crouchOffset = this.isCrouching ? 20 : 0;
-        
         ctx.translate(0, bob + crouchOffset);
 
         if (this.state === 'punch') {
@@ -762,17 +817,21 @@ class Fighter {
           ctx.rotate(-0.05);
         }
 
-        // --- DRAW SPECIAL EFFECTS BEFORE SPRITE (like Goku's aura) ---
+        // Draw image with scale factor
+        ctx.save();
+        const scaleFactor = Math.min(this.width / (img.width || 1), 120 / (img.height || 1)) * 1.5;
+        ctx.scale(scaleFactor, scaleFactor);
+        
         if (this.state === 'special' && this.charId === 'goku') {
           ctx.strokeStyle = 'rgba(255, 243, 0, 0.85)';
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 3 / scaleFactor;
           ctx.strokeRect(-img.width/2 - 10, -img.height/2 - 10, img.width + 20, img.height + 20);
         }
-
-        // Draw the main sprite
         ctx.drawImage(img, -img.width/2, -img.height/2);
+        ctx.restore();
 
         // --- DRAW DYNAMIC OVERLAYS (FIGHT ANIMATIONS) ---
+        // These are now drawn at 1:1 scale with the character's physical size
         if (this.state === 'special') {
           if (this.charId === 'goku') {
             if (this.attackFrame > 10 && this.attackFrame < 38) {
@@ -788,16 +847,16 @@ class Fighter {
              // Rasengan
              const randAngle = Math.random() * Math.PI * 2;
              ctx.save();
-             ctx.translate(img.width/2 + 10, 0);
+             ctx.translate(35, 0);
              ctx.rotate(randAngle);
              ctx.fillStyle = 'rgba(0, 243, 255, 0.7)';
              ctx.beginPath();
-             ctx.arc(0, 0, 30, 0, Math.PI * 2);
+             ctx.arc(0, 0, 25, 0, Math.PI * 2);
              ctx.fill();
              ctx.strokeStyle = '#ffffff';
-             ctx.lineWidth = 3;
+             ctx.lineWidth = 2;
              ctx.beginPath();
-             ctx.arc(0, 0, 25, 0, Math.PI);
+             ctx.arc(0, 0, 20, 0, Math.PI);
              ctx.stroke();
              ctx.restore();
           }
@@ -805,8 +864,8 @@ class Fighter {
             if (this.attackFrame > 12 && this.attackFrame < 32) {
                ctx.fillStyle = 'rgba(255, 0, 50, 0.85)';
                ctx.beginPath();
-               ctx.arc(60 + (this.attackFrame - 12) * 10, 0, 60, -Math.PI / 2.5, Math.PI / 2.5);
-               ctx.lineTo(80 + (this.attackFrame - 12) * 10, 0);
+               ctx.arc(50 + (this.attackFrame - 12) * 8, 0, 50, -Math.PI / 2.5, Math.PI / 2.5);
+               ctx.lineTo(70 + (this.attackFrame - 12) * 8, 0);
                ctx.closePath();
                ctx.fill();
              }
@@ -814,71 +873,10 @@ class Fighter {
           else if (this.charId === 'luffy') {
             // Stretched fist
             ctx.fillStyle = '#cc0000';
-            ctx.fillRect(20, -10, 150, 20); // Arm
+            ctx.fillRect(10, -5, 120, 12); // Arm
             ctx.fillStyle = '#ffdbac';
-            ctx.fillRect(170, -15, 30, 30); // Fist
+            ctx.fillRect(130, -10, 20, 20); // Fist
           }
-        }
-        else if (this.state === 'punch') {
-          if (this.charId === 'ichigo') {
-             // Quick sword slash
-             ctx.strokeStyle = '#ffffff'; // white blade flash
-             ctx.lineWidth = 4;
-             ctx.beginPath();
-             ctx.arc(30, 0, 50 + (this.attackFrame * 2), -Math.PI/2, Math.PI/4);
-             ctx.stroke();
-          } else if (this.charId === 'luffy') {
-             // Rubber stretched punch
-             ctx.fillStyle = this.data.colors.primary || '#cc0000';
-             ctx.fillRect(0, -15, 60 + (this.attackFrame * 5), 15);
-             ctx.fillStyle = this.data.colors.skin || '#ffdbac';
-             ctx.beginPath();
-             ctx.arc(60 + (this.attackFrame * 5), -8, 16, 0, Math.PI * 2);
-             ctx.fill();
-          } else {
-             // Standard dynamic motion blur fist (Goku / Naruto)
-             ctx.fillStyle = this.data.colors.primary || '#ffffff';
-             ctx.beginPath();
-             ctx.ellipse(30, -10, 20 + (this.attackFrame * 2), 12, 0, 0, Math.PI * 2);
-             ctx.fill();
-             ctx.fillStyle = this.data.colors.skin || '#ffdbac';
-             ctx.beginPath();
-             ctx.arc(50 + (this.attackFrame * 3), -10, 14, 0, Math.PI * 2);
-             ctx.fill();
-             ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-             ctx.lineWidth = 2;
-             ctx.beginPath();
-             ctx.moveTo(10, -15); ctx.lineTo(60 + this.attackFrame * 3, -15);
-             ctx.stroke();
-          }
-        }
-        else if (this.state === 'kick') {
-          // Dynamic leg extension
-          ctx.fillStyle = this.data.colors.secondary || '#000000';
-          ctx.beginPath();
-          ctx.ellipse(30, 20, 35 + (this.attackFrame * 2), 14, 0.2, 0, Math.PI * 2);
-          ctx.fill();
-          // Foot
-          ctx.fillStyle = this.data.colors.primary || '#ffffff';
-          ctx.beginPath();
-          ctx.arc(65 + (this.attackFrame * 3), 25, 12, 0, Math.PI * 2);
-          ctx.fill();
-          
-          ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(0, 15); ctx.lineTo(70 + this.attackFrame * 3, 20);
-          ctx.stroke();
-        }
-        else if (this.state === 'block') {
-           // Glowing block shield aura
-           ctx.strokeStyle = this.data.colors.accent || '#ffffff';
-           ctx.lineWidth = 6;
-           ctx.beginPath();
-           ctx.arc(25, 0, 45, -Math.PI / 2, Math.PI / 2);
-           ctx.stroke();
-           ctx.fillStyle = 'rgba(255,255,255,0.3)';
-           ctx.fill();
         }
       }
     } else {
@@ -1103,6 +1101,33 @@ class GameEngine {
           setTimeout(() => { this.keys[action.key] = false; }, 80);
         }
       });
+    });
+
+    // Mobile Touch Controls
+    const touchBtns = document.querySelectorAll('.touch-btn');
+    touchBtns.forEach(btn => {
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // prevent zoom/scroll
+        btn.classList.add('active');
+        const key = btn.getAttribute('data-key');
+        if (key) {
+          this.keys[key] = true;
+          this.handleKeyDown({ code: key });
+        }
+      }, { passive: false });
+      
+      const releaseTouch = (e) => {
+        e.preventDefault();
+        btn.classList.remove('active');
+        const key = btn.getAttribute('data-key');
+        if (key) {
+          this.keys[key] = false;
+          this.handleKeyUp({ code: key });
+        }
+      };
+      
+      btn.addEventListener('touchend', releaseTouch, { passive: false });
+      btn.addEventListener('touchcancel', releaseTouch, { passive: false });
     });
   }
 
@@ -1738,137 +1763,13 @@ class GameEngine {
       if (this.screenShake < 0.5) this.screenShake = 0;
     }
 
-    // Stage specifics
-    if (this.arenaId === 'temple') {
-      // Draw Japanese Dojo / Temple
-      // Sky grad
-      const grad = this.ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, '#1a0d1a');
-      grad.addColorStop(0.5, '#40122b');
-      grad.addColorStop(1, '#662233');
-      this.ctx.fillStyle = grad;
+    // Draw the 8-bit Jungle Background
+    if (imageAssets.bgImage && imageAssets.bgImage.complete) {
+      this.ctx.drawImage(imageAssets.bgImage, 0, 0, w, h);
+    } else {
+      // Fallback while loading
+      this.ctx.fillStyle = '#1a0d1a';
       this.ctx.fillRect(0, 0, w, h);
-
-      // Parallax Mountains
-      this.ctx.fillStyle = '#0f0612';
-      this.ctx.beginPath();
-      this.ctx.moveTo(0, 280);
-      this.ctx.lineTo(150, 180);
-      this.ctx.lineTo(300, 280);
-      this.ctx.lineTo(480, 140);
-      this.ctx.lineTo(650, 280);
-      this.ctx.lineTo(800, 200);
-      this.ctx.lineTo(800, 380);
-      this.ctx.lineTo(0, 380);
-      this.ctx.closePath();
-      this.ctx.fill();
-
-      // Midground Pagoda Silhouette
-      this.ctx.fillStyle = '#1c0f24';
-      this.ctx.fillRect(80, 120, 140, 160);
-      this.ctx.fillRect(60, 160, 180, 20); // Pagoda roofs
-      this.ctx.fillRect(50, 210, 200, 20);
-      this.ctx.fillRect(40, 260, 220, 25);
-
-      // Sun/Moon
-      this.ctx.fillStyle = '#ff3366';
-      this.ctx.shadowBlur = 40;
-      this.ctx.shadowColor = '#ff3366';
-      this.ctx.beginPath();
-      this.ctx.arc(580, 130, 45, 0, Math.PI * 2);
-      this.ctx.fill();
-      this.ctx.shadowBlur = 0; // reset shadow
-
-    } 
-    else if (this.arenaId === 'cyber') {
-      // Draw Cyberpunk Neon Skyline
-      this.ctx.fillStyle = '#05020c';
-      this.ctx.fillRect(0, 0, w, h);
-
-      // Grid Lines parallax back
-      this.ctx.strokeStyle = '#16082a';
-      this.ctx.lineWidth = 2;
-      for (let i = 0; i < w; i += 40) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(i, 0);
-        this.ctx.lineTo(i, 380);
-        this.ctx.stroke();
-      }
-
-      // Neon Skyscrapers
-      this.ctx.fillStyle = '#0b0416';
-      this.ctx.strokeStyle = '#8338ec';
-      this.ctx.lineWidth = 1;
-      
-      const towers = [
-        {x: 20, w: 90, h: 280, color: '#ff007f'},
-        {x: 150, w: 120, h: 320, color: '#00f3ff'},
-        {x: 340, w: 100, h: 250, color: '#fffb00'},
-        {x: 520, w: 140, h: 300, color: '#ff007f'},
-        {x: 700, w: 80, h: 270, color: '#39ff14'}
-      ];
-
-      towers.forEach(t => {
-        this.ctx.fillRect(t.x, 380 - t.h, t.w, t.h);
-        this.ctx.strokeStyle = t.color;
-        // Draw outline glowing edge
-        this.ctx.strokeRect(t.x, 380 - t.h, t.w, t.h);
-        
-        // Draw grid windows
-        this.ctx.fillStyle = 'rgba(255,255,255,0.04)';
-        for (let wx = t.x + 10; wx < t.x + t.w - 10; wx += 20) {
-          for (let wy = 380 - t.h + 20; wy < 380 - 20; wy += 35) {
-            this.ctx.fillRect(wx, wy, 8, 12);
-          }
-        }
-        this.ctx.fillStyle = '#0b0416'; // reset
-      });
-    } 
-    else if (this.arenaId === 'volcano') {
-      // Lava cavern
-      const grad = this.ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, '#150000');
-      grad.addColorStop(0.6, '#3a0900');
-      grad.addColorStop(1, '#ff3300');
-      this.ctx.fillStyle = grad;
-      this.ctx.fillRect(0, 0, w, h);
-
-      // Lava rocks
-      this.ctx.fillStyle = '#0d0101';
-      this.ctx.beginPath();
-      this.ctx.moveTo(0, 320);
-      for(let rx = 0; rx <= w; rx += 80) {
-        this.ctx.lineTo(rx, 280 + Math.sin(rx)*30);
-      }
-      this.ctx.lineTo(w, 380);
-      this.ctx.lineTo(0, 380);
-      this.ctx.closePath();
-      this.ctx.fill();
-    }
-
-    // --- DRAW GROUND LINE & FLOOR ---
-    this.ctx.fillStyle = '#120d22';
-    this.ctx.fillRect(0, 380, w, h - 380);
-    
-    // Draw 8-bit floor perspective lines
-    this.ctx.strokeStyle = '#231b46';
-    this.ctx.lineWidth = 3;
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, 380);
-    this.ctx.lineTo(w, 380);
-    this.ctx.stroke();
-
-    for (let i = -100; i <= w + 100; i += 80) {
-      this.ctx.beginPath();
-      this.ctx.moveTo(i, 380);
-      this.ctx.lineTo(i * 1.3 - 100, h);
-      this.ctx.stroke();
-    }
-
-    // Floor tile texture marks
-    this.ctx.fillStyle = '#1c1535';
-    for (let f = 390; f < h; f += 25) {
-      this.ctx.fillRect(0, f, w, 2);
     }
   }
 
